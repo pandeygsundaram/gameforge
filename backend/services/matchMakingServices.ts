@@ -1,10 +1,11 @@
 import type { Player, GameQueues, RoomData, RoomPlayer } from '../types/index.js';
 
 export class MatchmakingService {
-  private gameQueues: GameQueues = {
-    game1: [],
-    game2: []
-  };
+  private gameQueues: GameQueues = {}; // allow dynamic games
+
+  constructor() {
+    this.gameQueues = {};
+  }
 
   private activeRooms = new Map<string, RoomData>();
 

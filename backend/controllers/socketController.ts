@@ -13,6 +13,11 @@ export class SocketController {
 
   handleConnection(socket: Socket): void {
     console.log('New client connected:', socket.id);
+    socket.onAny((event, payload) => {
+        console.log(`Received event: ${event}`, payload);
+    });
+
+    socket.emit('message', { msg: 'You are connected to the game server!' });
 
     socket.on('connect_wallet', (data) => this.handleConnectWallet(socket, data));
     socket.on('join_game', (data) => this.handleJoinGame(socket, data));
@@ -23,8 +28,9 @@ export class SocketController {
   }
 
   private async handleConnectWallet(socket: Socket, data: any): Promise<void> {
-    const { walletAddress } = data;
-    
+    const payload = typeof data === 'string' ? JSON.parse(data) : data;
+    const { walletAddress } = payload;
+
     if (!walletAddress) {
       socket.emit('error', { message: 'Wallet address is required' });
       return;
@@ -47,7 +53,8 @@ export class SocketController {
   }
 
   private async handleJoinGame(socket: Socket, data: any): Promise<void> {
-    const { gameType } = data;
+    const payload = typeof data === 'string' ? JSON.parse(data) : data;
+    const { gameType } = payload;
     
     if (!socket.walletAddress) {
       socket.emit('error', { message: 'Please connect your wallet first' });

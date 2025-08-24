@@ -1,8 +1,8 @@
 export class MatchmakingService {
-    gameQueues = {
-        game1: [],
-        game2: []
-    };
+    gameQueues = {}; // allow dynamic games
+    constructor() {
+        this.gameQueues = {};
+    }
     activeRooms = new Map();
     generateRoomId() {
         return 'room_' + Math.random().toString(36).substr(2, 9);

@@ -1,4 +1,5 @@
 "use client";
+import { gameClient } from '@/service/gameClient';
 import { useState, useEffect } from 'react';
 
 // Define the type for the wallet state
@@ -46,6 +47,9 @@ const WalletConnectButton = () => {
           address: address,
           balance: balance
         });
+
+        // emit event to backend socket
+        gameClient.connectWallet(address);
 
         console.log('🚀 Wallet Connected:', address);
       } else {

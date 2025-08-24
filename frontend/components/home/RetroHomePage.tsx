@@ -7,6 +7,7 @@ import RoomLoader from './RoomLoader';
 import { PixelCloud, PixelStar, PixelTree, PixelMushroom } from './PixelElement';
 import { GAMES_DATA } from '@/components/utils/gameData';
 import WalletConnectButton from '../WalletConnectButton';
+import { gameClient } from '@/service/gameClient';
 
 const RetroHomePage = () => {
     const [selectedGame, setSelectedGame] = useState<any>(null);
@@ -15,7 +16,7 @@ const RetroHomePage = () => {
     const [typewriterText, setTypewriterText] = useState('');
     const router = useRouter();
 
-    const fullText = "LET'S PLAY RETRO GAMES!";
+    const fullText = "Play. Earn. Repeat!";
 
     // Typewriter effect
     useEffect(() => {
@@ -44,10 +45,26 @@ const RetroHomePage = () => {
         setSelectedGame(game);
         setShowLoader(true);
 
+        gameClient.waitingForGame(game.id);
+
         console.log(`🎮 [RETRO ARCADE] Player joining ${game.title}...`);
         console.log(`📟 [SYSTEM] Loading ROM: ${game.id}.bin`);
         console.log(`🕹️ [INPUT] Controllers detected: ${game.maxPlayers}`);
     };
+    useEffect(() => {
+        // Listen for match confirmation from server
+        gameClient.on('game_matched', (data) => {
+            console.log('🎯 Game matched!', data);
+            // Make sure it's for the game we picked
+            if (selectedGame && data.gameType === selectedGame.id) {
+                handleLoadingComplete(); // triggers router.push
+            }
+        });
+    
+        return () => {
+            gameClient.off('game_matched');
+        };
+    }, [selectedGame]);
 
     const handleLoadingComplete = () => {
         if (selectedGame) {
@@ -141,7 +158,7 @@ const RetroHomePage = () => {
                             letterSpacing: '0.1em'
                         }}
                     >
-                        RETRO GAME
+                        GAME BOX
                     </h1>
 
                     {/* Decorative Elements */}

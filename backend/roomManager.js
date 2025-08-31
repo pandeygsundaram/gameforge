@@ -1,7 +1,7 @@
 // roomManager.js
 import WebSocket, { WebSocketServer } from "ws";
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: 8081 });
 const rooms = {}; // roomId -> { clients: [], scores: { score1, score2 } }
 
 wss.on("connection", (ws) => {
